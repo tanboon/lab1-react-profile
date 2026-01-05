@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 type TProfileCardProps = {
   name?: string;
   role?: string;
@@ -5,12 +7,15 @@ type TProfileCardProps = {
 };
 
 function ProfileCard({ name, role, bio }: TProfileCardProps) {
+  const [likes, setLikes] = useState<number>(0);
+
   return (
     <div
       style={{
         display: "flex",
         flexDirection: "column",
-        width: "max-content",
+        alignItems: "center",
+        maxWidth: 360,
         padding: 16,
         backgroundColor: "#ffffff",
         color: "#000000",
@@ -22,6 +27,10 @@ function ProfileCard({ name, role, bio }: TProfileCardProps) {
         <strong>{role}</strong>
       </p>
       <p>{bio}</p>
+
+      <button onClick={() => setLikes((prev) => prev + 1)}>
+        Likes : {likes}
+      </button>
     </div>
   );
 }
