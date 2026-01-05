@@ -1,26 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import ProfileCard from "./components/ProfileCard";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [githubData, setGithubData] = useState<any>(null);
+  const username = "tanboon";
+
+  useEffect(() => {
+    fetch(`https:api.github.com/users/${username}`)
+      .then((res) => res.json())
+      .then((data) => setGithubData(data))
+      .catch((err) => console.error(err));
+  }, []);
 
   return (
     <>
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         <h1>My Team Portfolio</h1>
 
-        <ProfileCard
-          name="ทานบุญ​ เที่ยงทัต 6633091321"
-          role="Student @ CEDT"
-          bio="อย่าซีเล็ง เดี๋ยวซู้หลิ่ง"
-        />
-
-        <ProfileCard
-          name="John Doe"
-          role="Guest Developer"
-          bio="i love coding and learning new things."
-        />
+        {githubData ? (
+          <ProfileCard
+            name={githubData?.name ?? ""}
+            role="Github User"
+            bio={githubData?.bio ?? ""}
+          />
+        ) : (
+          <p>loading...</p>
+        )}
       </div>
     </>
   );
