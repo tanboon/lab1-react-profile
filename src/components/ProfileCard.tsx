@@ -9,7 +9,20 @@ type TProfileCardProps = {
 function ProfileCard({ name, role, bio }: TProfileCardProps) {
   const [likes, setLikes] = useState<number>(0);
   const [skills, setSkills] = useState<Array<string>>(["ซามูไร", "โทคูน"]);
+  const [filteredSkills, setFilteredSkills] = useState<Array<string> | null>();
   const [newSkills, setNewSkills] = useState<string>();
+  const [query, setQuery] = useState<string>();
+
+  const handleSearch = () => {
+    const filteredSkills = skills.filter((skill) =>
+      skill
+        .toLocaleLowerCase()
+        .includes(query?.trim().toLocaleLowerCase() ?? "")
+    );
+
+    setFilteredSkills(filteredSkills);
+    setQuery("");
+  };
 
   const handleUpdateSkills = () => {
     if (newSkills?.trim()) {
@@ -42,18 +55,83 @@ function ProfileCard({ name, role, bio }: TProfileCardProps) {
         Likes : {likes}
       </button>
 
-      <input
-        value={newSkills}
-        onChange={(e) => {
-          setNewSkills(e.target.value);
-        }}
-      />
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        <span>Skills</span>
+        <div style={{ display: "flex", flexDirection: "row", gap: 10 }}>
+          <input
+            placeholder="search"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSearch();
+              }
+            }}
+          />
 
-      <button onClick={handleUpdateSkills}>Add</button>
+          <button onClick={() => setFilteredSkills(null)}>Clear</button>
+        </div>
+        {filteredSkills ? (
+          <ul>
+            {filteredSkills.map((skill) => (
+              <li>{skill}</li>
+            ))}
+          </ul>
+        ) : (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 10,
+            }}
+          >
+            {skills.map((skill) => (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <span
+                  style={{
+                    color: skill === "React" ? "blue" : "black",
+                    fontWeight: skill === "React" ? 700 : 400,
+                  }}
+                >
+                  {skill}
+                </span>
+                <button
+                  onClick={() => {
+                    setSkills((prev) => prev.filter((v) => v !== skill));
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <input
+            placeholder="add"
+            value={newSkills}
+            onChange={(e) => {
+              setNewSkills(e.target.value);
+            }}
+          />
 
-      {skills.map((skill) => (
-        <div>{skill}</div>
-      ))}
+          <button onClick={handleUpdateSkills}>Add</button>
+        </div>
+      </div>
     </div>
   );
 }
